@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "us-east-1"
+  region  = "us-west-2"
 }
 
 resource "aws_instance" "app_server_1" {
@@ -18,6 +18,6 @@ resource "aws_instance" "app_server_1" {
   instance_type = "t2.micro"
 
   tags = {
-    Name = "Demo_1"
+    Name = "Terrafrom_demo"
   }
 }
