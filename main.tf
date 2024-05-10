@@ -4,6 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
+      version = "=3.0.0"
     }
   }
 }
@@ -13,63 +14,49 @@ provider "azurerm" {
   features {}
 }
 
-variable "prefix" {
-  default = "Demo"
-}
-
-resource "azurerm_resource_group" "example" {
-  name     = "${var.prefix}-resources"
+resource "azurerm_resource_group" "Demo" {
+  name     = "resources"
   location = "West Europe"
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.prefix}-network"
+  name                = "network"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.Demo.location
+  resource_group_name = azurerm_resource_group.Demo.name
 }
 
 resource "azurerm_subnet" "internal" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.example.name
+  resource_group_name  = azurerm_resource_group.Demo.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-resource "public_ip_address_id" "example" {
-  name                = "acceptanceTestPublicIp1"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  allocation_method   = "Static"
-
-}
-
-
 resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  name                = "nic"
+  location            = azurerm_resource_group.Demo.location
+  resource_group_name = azurerm_resource_group.Demo.name
 
   ip_configuration {
     name                          = "testconfiguration1"
     subnet_id                     = azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = ""
   }
 }
 
 resource "azurerm_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
-  location              = azurerm_resource_group.example.location
-  resource_group_name   = azurerm_resource_group.example.name
+  name                  = "vm"
+  location              = azurerm_resource_group.Demo.location
+  resource_group_name   = azurerm_resource_group.Demo.name
   network_interface_ids = [azurerm_network_interface.main.id]
   vm_size               = "Standard_DS1_v2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
-   delete_os_disk_on_termination = true
+  # delete_os_disk_on_termination = true
 
   # Uncomment this line to delete the data disks automatically when deleting the VM
-   delete_data_disks_on_termination = true
+  # delete_data_disks_on_termination = true
 
   storage_image_reference {
     publisher = "Canonical"
@@ -95,5 +82,3 @@ resource "azurerm_virtual_machine" "main" {
     environment = "staging"
   }
 }
-
-#my name is Bhavin
