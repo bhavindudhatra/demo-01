@@ -95,3 +95,5 @@ resource "azurerm_virtual_machine" "main" {
     environment = "staging"
   }
 }
+
+#my name is bhavin
