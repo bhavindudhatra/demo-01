@@ -96,4 +96,4 @@ resource "azurerm_virtual_machine" "main" {
   }
 }
 
-#my name is bhavin
+#my name is Bhavin
